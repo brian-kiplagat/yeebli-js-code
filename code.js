@@ -1,4 +1,4 @@
-<script>
+
 document.getElementById('lead_form').addEventListener('submit', async function (e) {
     e.preventDefault(); // Prevent the default form submission
     
@@ -28,4 +28,3 @@ document.getElementById('lead_form').addEventListener('submit', async function (
         errorDiv.style.display = 'block';
     }
 });
-</script>
