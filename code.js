@@ -1,4 +1,3 @@
-
 document.getElementById('lead_form').addEventListener('submit', async function (e) {
     e.preventDefault(); // Prevent the default form submission
     
@@ -17,7 +16,7 @@ document.getElementById('lead_form').addEventListener('submit', async function (
             const result = await response.json();
             console.log('Success:', result);
            if (redirectUrl) {
-                window.location.href = redirectUrl; // Redirect only if URL exists
+                //window.location.href = redirectUrl; // Redirect only if URL exists
             }
         } else {
             const errorResult = await response.json();
@@ -79,9 +78,16 @@ document.getElementById('lead_form').addEventListener('submit', async function (
 
         // Attach token to the form before submission
         const form = event.target;
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "cf-turnstile-response";
+        // Attach token to the form (overwrite if exists)
+        let input = form.querySelector('input[name="cf-turnstile-response"]');
+        
+        if (!input) {
+            input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "cf-turnstile-response";
+            form.appendChild(input);
+        }
+
         input.value = window.cfTurnstileToken;
         form.appendChild(input);
     }
@@ -95,4 +101,3 @@ document.getElementById('lead_form').addEventListener('submit', async function (
         }
     });
 })();
-
