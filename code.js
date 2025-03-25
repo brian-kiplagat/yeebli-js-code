@@ -5,6 +5,7 @@ document.getElementById('lead_form').addEventListener('submit', async function (
     const form = e.target;
     const formData = new FormData(form);
     const errorDiv = document.getElementById('lead_form_error');
+    const redirectUrl = formData.get("redirect_url");
     
     try {
         const response = await fetch(form.action, {
@@ -15,7 +16,9 @@ document.getElementById('lead_form').addEventListener('submit', async function (
         if (response.ok) {
             const result = await response.json();
             console.log('Success:', result);
-            window.location.href = "http://www.w3schools.com";
+           if (redirectUrl) {
+                window.location.href = redirectUrl; // Redirect only if URL exists
+            }
         } else {
             const errorResult = await response.json();
             console.error('Error:', errorResult);
