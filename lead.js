@@ -43,7 +43,7 @@
             if (!eventId){
                 console.warn('No event id detected')
             };
-            const uri = `https://api.3themind.com/v1/event/${event_id}/dates`
+            const uri = `https://api.3themind.com/v1/event/${eventId}/dates`
             const response = await fetch(datesApiUrl);
             const data = await response.json();
 
