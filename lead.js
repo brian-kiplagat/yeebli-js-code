@@ -38,6 +38,12 @@
         if (!select) return;
 
         try {
+            const form = document.getElementById("lead_form");
+            const eventId = form.querySelector('input[name="event_id"]').value; // Get the event_id from the form
+            if (!eventId){
+                console.warn('No event id detected')
+            };
+            const uri = `https://api.3themind.com/v1/event/${event_id}/dates`
             const response = await fetch(datesApiUrl);
             const data = await response.json();
 
