@@ -1,6 +1,6 @@
 (function () {
     const siteKey = "0x4AAAAAABCbrufzZroJH3VC"; // Replace with your Turnstile site key
-    const datesApiUrl = "https://yourdomain.com/api/event-dates"; // Replace with your real endpoint
+
 
     // Store CAPTCHA response globally
     window.onTurnstileSuccess = function (token) {
@@ -44,7 +44,7 @@
                 console.warn('No event id detected')
             };
             const uri = `https://api.3themind.com/v1/event/${eventId}/dates`
-            const response = await fetch(datesApiUrl);
+            const response = await fetch(uri);
             const data = await response.json();
 
             select.innerHTML = "";
