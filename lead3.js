@@ -45,7 +45,7 @@
             };
             const uri = `https://api.3themind.com/v1/event/${eventId}/dates`
             const response = await fetch(uri);
-            const data = await response.json();
+            const data = await response.json().dates;
 
             select.innerHTML = "";
 
