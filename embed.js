@@ -100,32 +100,43 @@
                 }
                 input.value = window.cfTurnstileToken;
 
+               
+
                 const formData = new FormData(form);
-                const redirectUrl = formData.get("redirect_url");
+const redirectUrl = formData.get("redirect_url");
 
-                try {
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                    });
+try {
+    const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+    });
 
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log("Success:", result);
-                        if (redirectUrl) {
-                            window.location.href = redirectUrl;
-                        }
-                    } else {
-                        const errorResult = await response.json();
-                        console.error("Error:", errorResult);
-                        errorDiv.textContent = errorResult.message || "An error occurred during submission.";
-                        errorDiv.style.display = "block";
-                    }
-                } catch (error) {
-                    console.error("Fetch Error:", error);
-                    errorDiv.textContent = "Network error. Please try again.";
-                    errorDiv.style.display = "block";
-                }
+    if (response.ok) {
+        const result = await response.json();
+        console.log("Success:", result);
+        if (redirectUrl) {
+            window.location.href = redirectUrl;
+        }
+    } else {
+        const errorResult = await response.json();
+        console.error("Error:", errorResult);
+
+        if (errorResult?.error?.issues?.length > 0) {
+            // Extract and join all validation error messages
+            const messages = errorResult.error.issues.map(issue => issue.message).join("\n");
+            errorDiv.textContent = messages;
+        } else {
+            errorDiv.textContent = errorResult.message || "An error occurred during submission.";
+        }
+
+        errorDiv.style.display = "block";
+    }
+} catch (error) {
+    console.error("Fetch Error:", error);
+    errorDiv.textContent = "Network error. Please try again.";
+    errorDiv.style.display = "block";
+}
+
             });
         }
     });
