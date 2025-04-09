@@ -58,17 +58,24 @@
             }
 
             dates.forEach(item => {
-                const option = document.createElement("option");
-                const date = new Date(parseInt(item.date) * 1000);
-                option.value = item.id;
-                option.textContent = date.toLocaleDateString("en-US", {
-                    weekday: 'short',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                select.appendChild(option);
-            });
+    const option = document.createElement("option");
+    const date = new Date(parseInt(item.date) * 1000);
+
+    option.value = item.id;
+    option.textContent = date.toLocaleString("en-US", {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'GMT',
+        timeZoneName: 'short'
+    });
+
+    select.appendChild(option);
+});
         } catch (err) {
             console.error("Error loading event dates:", err);
             select.innerHTML = '<option value="">Error loading dates</option>';
