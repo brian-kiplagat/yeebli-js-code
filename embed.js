@@ -62,17 +62,17 @@
     const date = new Date(parseInt(item.date) * 1000);
 
     option.value = item.id;
-    option.textContent = date.toLocaleString("en-US", {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-        timeZone: 'GMT',
-        timeZoneName: 'short'
-    });
+    option.textContent = date.toLocaleString("en-GB", {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'Europe/London',
+    timeZoneName: 'short'
+});
 
     select.appendChild(option);
 });
