@@ -70,8 +70,8 @@
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
-    timeZone: 'Etc/GMT',
-    timeZoneName: 'short'
+    timeZone: 'Europe/London',
+   timeZoneName: "shortOffset",
 });
 
     select.appendChild(option);
