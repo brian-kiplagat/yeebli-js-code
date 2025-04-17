@@ -70,7 +70,7 @@
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
-    timeZone: 'Europe/London',
+    timeZone: 'Etc/GMT',
     timeZoneName: 'short'
 });
 
