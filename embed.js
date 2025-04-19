@@ -34,21 +34,16 @@
         }
     }
 
-    async function loadEventDates() {
+    async function loadEventDates(membershipId = null) {
         const select = document.getElementById("event_date");
         if (!select) return;
 
         try {
-            const form = document.getElementById("lead_form");
-            const eventId = form.querySelector('input[name="event_id"]').value; // Get the event_id from the form
-            if (!eventId){
-                console.warn('No event id detected')
-            };
-            const uri = `https://api.3themind.com/v1/event/${eventId}/dates`
+
+            const uri = `https://api.3themind.com/v1/membership/${membershipId}/dates-for-plan`
             const response = await fetch(uri);
-            const data = await response.json();
-            const dates = data.dates
-            console.log(data)
+            const dates = await response.json();
+
 
             select.innerHTML = "";
 
@@ -58,33 +53,72 @@
             }
 
             dates.forEach(item => {
-    const option = document.createElement("option");
-    const date = new Date(parseInt(item.date) * 1000);
+                const option = document.createElement("option");
+                const date = new Date(parseInt(item.date) * 1000);
 
-    option.value = item.id;
-    option.textContent = date.toLocaleString("en-GB", {
-    weekday: 'short',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: 'Europe/London',
-   timeZoneName: "shortOffset",
-});
+                option.value = item.id;
+                option.textContent = date.toLocaleString("en-GB", {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                    timeZone: 'Europe/London',
+                    timeZoneName: "shortOffset",
+                });
 
-    select.appendChild(option);
-});
+                select.appendChild(option);
+            });
         } catch (err) {
             console.error("Error loading event dates:", err);
             select.innerHTML = '<option value="">Error loading dates</option>';
         }
     }
+    async function loadMembershipPlans() {
+        const select = document.getElementById("membership");
+        if (!select) return;
 
+        try {
+            const form = document.getElementById("lead_form");
+            const eventId = form.querySelector('input[name="event_id"]').value; // Get the event_id from the form
+            if (!eventId) {
+                console.warn('No event id detected')
+            };
+            const uri = `https://api.3themind.com/v1/event/${eventId}`
+            const response = await fetch(uri);
+            const data = await response.json();
+            const
+                memberships = data.memberships
+            console.log(data)
+
+            select.innerHTML = "";
+
+            if (!Array.isArray(
+                memberships) ||
+                memberships.length === 0) {
+                select.innerHTML = '<option value="">No tickets available</option>';
+                return;
+            }
+
+
+            memberships.forEach(item => {
+                const option = document.createElement("option");
+
+
+                option.value = item.id;
+                option.textContent = item.name;
+                select.appendChild(option);
+            });
+        } catch (err) {
+            console.error("Error loading memberships:", err);
+            select.innerHTML = '<option value="">Error loading memberships</option>';
+        }
+    }
     window.addEventListener("load", function () {
         injectTurnstile();
-        loadEventDates();
+        loadMembershipPlans();
 
         const form = document.getElementById("lead_form");
         const errorDiv = document.getElementById("lead_form_error");
@@ -107,44 +141,51 @@
                 }
                 input.value = window.cfTurnstileToken;
 
-               
+
 
                 const formData = new FormData(form);
-const redirectUrl = formData.get("redirect_url");
+                const redirectUrl = formData.get("redirect_url");
 
-try {
-    const response = await fetch(form.action, {
-        method: 'POST',
-        body: formData,
-    });
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                    });
 
-    if (response.ok) {
-        const result = await response.json();
-        console.log("Success:", result);
-        if (redirectUrl) {
-            window.location.href = redirectUrl;
-        }
-    } else {
-        const errorResult = await response.json();
-        console.error("Error:", errorResult);
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log("Success:", result);
+                        if (redirectUrl) {
+                            window.location.href = redirectUrl;
+                        }
+                    } else {
+                        const errorResult = await response.json();
+                        console.error("Error:", errorResult);
 
-        if (errorResult?.error?.issues?.length > 0) {
-            // Extract and join all validation error messages
-            const messages = errorResult.error.issues.map(issue => issue.message).join("\n");
-            errorDiv.textContent = messages;
-        } else {
-            errorDiv.textContent = errorResult.message || "An error occurred during submission.";
-        }
+                        if (errorResult?.error?.issues?.length > 0) {
+                            // Extract and join all validation error messages
+                            const messages = errorResult.error.issues.map(issue => issue.message).join("\n");
+                            errorDiv.textContent = messages;
+                        } else {
+                            errorDiv.textContent = errorResult.message || "An error occurred during submission.";
+                        }
 
-        errorDiv.style.display = "block";
-    }
-} catch (error) {
-    console.error("Fetch Error:", error);
-    errorDiv.textContent = "Network error. Please try again.";
-    errorDiv.style.display = "block";
-}
+                        errorDiv.style.display = "block";
+                    }
+                } catch (error) {
+                    console.error("Fetch Error:", error);
+                    errorDiv.textContent = "Network error. Please try again.";
+                    errorDiv.style.display = "block";
+                }
 
             });
+            const membershipSelect = document.getElementById("membership");
+            if (membershipSelect) {
+                membershipSelect.addEventListener("change", function (e) {
+                    const selectedMembershipId = e.target.value;
+                    loadEventDates(selectedMembershipId); // Reload dates for the selected membership
+                });
+            }
         }
     });
 })();
