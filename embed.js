@@ -51,6 +51,12 @@
                 select.innerHTML = '<option value="">No dates available</option>';
                 return;
             }
+            // Add default unselected option
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = "Select a date";
+            select.appendChild(defaultOption);
+
 
             dates.forEach(item => {
                 const option = document.createElement("option");
@@ -101,7 +107,11 @@
                 select.innerHTML = '<option value="">No tickets available</option>';
                 return;
             }
-
+            // Add default unselected option
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = "Select a ticket plan";
+            select.appendChild(defaultOption);
 
             memberships.forEach(item => {
                 const option = document.createElement("option");
@@ -111,6 +121,7 @@
                 option.textContent = item.name;
                 select.appendChild(option);
             });
+
         } catch (err) {
             console.error("Error loading memberships:", err);
             select.innerHTML = '<option value="">Error loading memberships</option>';
