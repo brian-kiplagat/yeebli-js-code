@@ -1,0 +1,83 @@
+
+(function () {
+
+
+  let num1, num2, correctAnswer;
+
+  function generateCaptcha() {
+    num1 = Math.floor(Math.random() * 10) + 1;
+    num2 = Math.floor(Math.random() * 10) + 1;
+    correctAnswer = num1 + num2;
+
+    document.getElementById("captcha_question").textContent = `What is ${num1} + ${num2}?`;
+    document.getElementById("captcha_answer").value = "";
+
+  }
+
+
+
+  window.addEventListener("load", function () {
+    generateCaptcha(); // show captcha on load
+
+
+    const form = document.getElementById("lead_form");
+    const errorDiv = document.getElementById("lead_form_error");
+
+    if (form) {
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const userAnswer = parseInt(document.getElementById("captcha_answer").value);
+        if (userAnswer !== correctAnswer) {
+          errorDiv.style.display = "block";
+          errorDiv.textContent = '❌ Wrong answer. Please try again!'
+          generateCaptcha(); // regenerate new question
+          return;
+        }
+
+        const formData = new FormData(form);
+        const redirectUrl = formData.get("redirect_url");
+
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            console.log("Success:", result);
+            if (redirectUrl) {
+              window.location.href = redirectUrl;
+            }
+          } else {
+            const errorResult = await response.json();
+            console.error("Error:", errorResult);
+
+            if (errorResult?.error?.issues?.length > 0) {
+              // Extract and join all validation error messages
+              const messages = errorResult.error.issues.map(issue => issue.message).join("\n");
+              errorDiv.textContent = messages;
+            } else {
+              errorDiv.textContent = errorResult.message || "An error occurred during submission.";
+            }
+
+            errorDiv.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Fetch Error:", error);
+          errorDiv.textContent = "Network error. Please try again.";
+          errorDiv.style.display = "block";
+        }
+
+      });
+      const membershipSelect = document.getElementById("membership");
+      if (membershipSelect) {
+        membershipSelect.addEventListener("change", function (e) {
+          const selectedMembershipId = e.target.value;
+          loadEventDates(selectedMembershipId); // Reload dates for the selected membership
+        });
+      }
+    }
+  });
+})();
