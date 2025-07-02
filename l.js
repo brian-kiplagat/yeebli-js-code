@@ -45,6 +45,7 @@
         }
 
         // Sort memberships by their first (and only) date
+       const now = Date.now()
        const sortedMemberships = memberships
         .filter((membership) => {
             const date = parseInt(membership.dates[0]?.date || '0') * 1000
